@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MultimodalAI_API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+900f27a2fff812d5585deaf90f4f20e047445e5c")]
 [assembly: System.Reflection.AssemblyProductAttribute("MultimodalAI_API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MultimodalAI_API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
