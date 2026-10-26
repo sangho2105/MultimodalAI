@@ -119,8 +119,8 @@ export default function Dashboard({ products, reports, onNavigateToInspect, onRe
                         <td style={{ textAlign: 'center', color: '#dc2626', fontWeight: 600 }}>{p.failedStock}</td>
                         <td style={{ width: '140px' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '2px' }}>
-                            <span>{pRate}%</span>
-                            <span style={{ color: '#64748b' }}>{totalInspected}/{p.totalStock}</span>
+                            <span style={{ fontWeight: 600 }}>{pRate}%</span>
+                            <span style={{ color: '#64748b' }}>{p.passedStock}/{p.totalStock}</span>
                           </div>
                           <div className="progress-bar-bg">
                             <div 

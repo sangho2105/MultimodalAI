@@ -1,0 +1,18 @@
+# Visual Studio
+.vs/
+
+# Build output
+bin/
+obj/
+
+# User files
+*.user
+*.suo
+
+# Environment / Secret configuration files
+appsettings.Development.json
+**/appsettings.Development.json
+
+# Uploads (nếu không muốn lưu ảnh test)
+MultimodalAI_API/wwwroot/uploads/
+!MultimodalAI_API/wwwroot/uploads/.gitkeep
