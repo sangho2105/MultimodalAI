@@ -26,47 +26,33 @@ Hệ thống kiểm định khuyết tật sản phẩm và quản lý chất l�
 
 ## 2. LUỒNG HOẠT ĐỘNG (WORKFLOW)
 
-Quy trình xử lý khép kín 5 bước theo thiết kế hệ thống (Trang 3 Đề bài):
+Hệ thống vận hành theo quy trình khép kín 5 bước:
 
-```mermaid
-flowchart LR
-    subgraph S1["1. USER INTERFACE (REACT)"]
-        UI1["Tải ảnh / Chọn tiêu chí"] --> UI2["Xem trước ảnh Live Preview"]
-    end
+**[1. Tải ảnh & Chọn tiêu chí]** ➔ **[2. Backend xử lý & Lưu ảnh]** ➔ **[3. Gemini AI phân tích]** ➔ **[4. QC Xem lại & Xác nhận]** ➔ **[5. Giao dịch DB & Cập nhật kho]**
 
-    subgraph S2["2. WEB API BACKEND (.NET 10)"]
-        API1["Nhận multipart/form-data"] --> API2["Lưu trữ ảnh vào wwwroot/uploads"]
-        API2 --> API3["Chuyển đổi Base64 / Stream"]
-    end
+1. **Bước 1: Tải ảnh & Chọn tiêu chí (User Interface - React)**
+   - Nhân viên QC chọn sản phẩm cần kiểm định, chọn người thực hiện và tải ảnh lên từ giao diện.
+   - Hỗ trợ kéo thả file và xem trước ảnh tức thì (Live Preview).
 
-    subgraph S3["3. GEMINI VISION SERVICE"]
-        AI1["Google Gemini Vision API"] --> AI2["Phân tích khuyết tật đa phương thức"]
-        AI2 --> AI3["Trả về JSON có cấu trúc (Tiếng Việt)"]
-    end
+2. **Bước 2: Tiếp nhận & Lưu trữ file (Web API Backend - .NET 10)**
+   - API tiếp nhận yêu cầu dạng `multipart/form-data`.
+   - Kiểm tra định dạng hợp lệ (.jpg, .png, .webp) và giới hạn dung lượng (tối đa 10MB).
+   - Lưu trữ ảnh vật lý vào thư mục tĩnh `wwwroot/uploads/` và chuyển đổi sang Base64 phục vụ AI.
 
-    subgraph S4["4. REVIEW & CONFIRMATION"]
-        REV1["Hiển thị kết quả AI đề xuất"] --> REV2["QC Review, hiệu chỉnh & bấm Xác nhận"]
-    end
+3. **Bước 3: Phân tích hình ảnh (Google Gemini Vision AI)**
+   - Backend gửi ảnh kèm prompt tiếng Việt chuẩn hóa định dạng JSON tới Gemini API.
+   - AI kiểm tra độ rõ nét của ảnh, phát hiện khuyết tật, phân loại lỗi, chấm điểm tin cậy (*Confidence Score*) và đề xuất trạng thái (*Passed/Failed*).
+   - Tích hợp cơ chế tự động thử lại (Retry) và chuyển đổi dự phòng model (Fallback) nếu server AI bận.
 
-    subgraph S5["5. DATABASE TRANSACTION (EF CORE)"]
-        DB1["Khởi tạo IDbContextTransaction"] --> DB2["Lưu InspectionReport (IsUserConfirmed = true)"]
-        DB2 --> DB3["Cập nhật PassedStock / FailedStock"]
-        DB3 --> DB4["Commit Transaction & Cập nhật Dashboard"]
-    end
+4. **Bước 4: Xem lại & Xác nhận (Review & Confirmation)**
+   - Kết quả trích xuất từ AI được hiển thị trực quan bên cạnh ảnh sản phẩm trên giao diện.
+   - Nhân viên QC có thể kiểm tra, điều chỉnh thông tin hoặc bổ sung mô tả lỗi trước khi phê duyệt.
 
-    UI2 -->|POST /api/inspectionreports/analyze| API1
-    API3 -->|Payload Base64 + Prompt| AI1
-    AI3 -->|JSON kết quả| REV1
-    REV2 -->|POST /api/inspectionreports/confirm| DB1
-    DB4 -.->|Real-time update| UI1
-```
-
-### Chi tiết 5 bước thực thi:
-1. **User Uploads**: Nhân viên QC chọn sản phẩm, nhân viên phụ trách và tải ảnh lên từ giao diện React.
-2. **Backend Processes**: API tiếp nhận `IFormFile`, xác thực định dạng/dung lượng và lưu ảnh vào `wwwroot/uploads`.
-3. **Gemini Analyzes**: Chuyển đổi dữ liệu ảnh sang Base64, gọi Google Gemini Vision API với prompt tiếng Việt chuẩn hóa JSON (có cơ chế Retry / Fallback khi gặp lỗi 503/429).
-4. **Review & Confirm**: Hiển thị kết quả AI trích xuất bên cạnh ảnh xem trước. Nhân viên QC kiểm tra, điều chỉnh mô tả lỗi nếu cần rồi nhấn xác nhận.
-5. **Database Transaction**: Khởi tạo `IDbContextTransaction` lưu `InspectionReport`, cập nhật kho hàng (`PassedStock` / `FailedStock`), commit giao dịch và phản hồi cập nhật Dashboard.
+5. **Bước 5: Giao dịch & Cập nhật kho (Database Transaction - EF Core)**
+   - Kích hoạt giao dịch nguyên tử `IDbContextTransaction` để đảm bảo tính toàn vẹn dữ liệu.
+   - Lưu báo cáo kiểm định (`InspectionReport`) với cờ xác nhận `IsUserConfirmed = true`.
+   - Tự động tăng số lượng hàng đạt (`PassedStock`) hoặc hàng lỗi (`FailedStock`) của sản phẩm.
+   - Commit giao dịch và đồng bộ số liệu thống kê lên Dashboard theo thời gian thực.
 
 ---
 
