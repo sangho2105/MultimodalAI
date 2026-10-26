@@ -53,6 +53,54 @@ export default function InspectionUpload({
     setFeedback(null);
   };
 
+  // Bộ 4 kịch bản ảnh kiểm thử thực tế (R6 Test Scenarios)
+  const sampleScenarios = [
+    {
+      id: 1,
+      title: '01. Đạt chuẩn (Pass)',
+      filename: '01_good_product.jpg',
+      productId: 2,
+      desc: 'Bề mặt sạch đẹp, không lỗi'
+    },
+    {
+      id: 2,
+      title: '02. Lỗi nhẹ (Minor)',
+      filename: '02_minor_scratch.jpg',
+      productId: 2,
+      desc: 'Trầy xước bề mặt vỏ nhôm'
+    },
+    {
+      id: 3,
+      title: '03. Lỗi nặng (Major)',
+      filename: '03_major_cracked.jpg',
+      productId: 2,
+      desc: 'Nứt vỡ cấu trúc mặt lưng'
+    },
+    {
+      id: 4,
+      title: '04. Ảnh mờ (Unclear)',
+      filename: '04_unclear_blurry.jpg',
+      productId: 2,
+      desc: 'Ảnh mờ/tối, AI báo chụp lại'
+    }
+  ];
+
+  const handleSelectSample = async (sample) => {
+    try {
+      setSelectedProductId(sample.productId);
+      const res = await fetch(`/test-images/${sample.filename}`);
+      const blob = await res.blob();
+      const file = new File([blob], sample.filename, { type: 'image/jpeg' });
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(blob));
+      setError('');
+      setAnalysisResult(null);
+      setFeedback(null);
+    } catch (err) {
+      setError('Không thể nạp ảnh mẫu: ' + err.message);
+    }
+  };
+
   // Kéo thả file
   const handleDrop = (e) => {
     e.preventDefault();
@@ -245,6 +293,43 @@ export default function InspectionUpload({
                     </option>
                   ))}
                 </select>
+              </div>
+            </div>
+
+            {/* Bộ kịch bản ảnh test mẫu nhanh */}
+            <div style={{ marginBottom: '1.25rem', backgroundColor: '#f8fafc', padding: '0.875rem 1rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#334155', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <Info size={15} color="#2563eb" />
+                  Kịch bản kiểm thử mẫu có sẵn (R6 Test Images):
+                </span>
+                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Bấm chọn để nạp nhanh</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.5rem' }}>
+                {sampleScenarios.map(s => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => handleSelectSample(s)}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                      padding: '0.6rem 0.75rem',
+                      borderRadius: '6px',
+                      border: '1px solid #cbd5e1',
+                      backgroundColor: '#ffffff',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      transition: 'all 0.15s ease'
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#2563eb'; e.currentTarget.style.backgroundColor = '#eff6ff'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.backgroundColor = '#ffffff'; }}
+                  >
+                    <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#0f172a' }}>{s.title}</span>
+                    <span style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '2px', lineHeight: 1.2 }}>{s.desc}</span>
+                  </button>
+                ))}
               </div>
             </div>
 
