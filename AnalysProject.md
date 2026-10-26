@@ -194,14 +194,12 @@ Thu thập hoặc chuẩn bị 4 ảnh mẫu vào thư mục tài nguyên test:
 4. **Ảnh 4 (Faulty / Unclear Image)**: Ảnh bị mờ nhòe, tối hoặc không thể xác định chi tiết -> AI kích hoạt cơ chế báo ảnh không hợp lệ (`isImageClear = false`).
 
 #### Bước 5.2: Hoàn thiện tài liệu & Bàn giao sản phẩm (Deliverables)
-- [ ] Kiểm tra toàn bộ luồng hoạt động từ Client -> API -> Gemini Vision -> Database Transaction -> Cập nhật kho.
-- [ ] Viết tài liệu `README.md` đầy đủ:
-  - Giới thiệu dự án, sơ đồ kiến trúc quy trình (Page 3 PDF).
-  - Hướng dẫn cài đặt cơ sở dữ liệu (`dotnet ef database update`).
-  - Hướng dẫn cấu hình API Key Gemini.
-  - Hướng dẫn chạy Backend Web API và Frontend React.
-- [ ] Quay video ngắn (Short video) demo các endpoints hoạt động và giao diện người dùng.
-- [ ] Đẩy toàn bộ source code lên Git repository và chuẩn bị email nộp bài theo yêu cầu đề.
+- [x] Kiểm tra toàn bộ luồng hoạt động từ Client -> API -> Gemini Vision -> Database Transaction -> Cập nhật kho.
+- [x] Tạo bộ 4 hình ảnh kiểm thử thực tế (Good, Minor Defect, Major Defect, Unclear) trong thư mục `TestImages/`.
+- [x] Viết tài liệu `README.md` đầy đủ chuẩn mực (Kiến trúc Page 3 PDF, ERD, API specs, Setup guide, Test Scenarios, Email template).
+- [ ] Quay video ngắn (Short video) demo các endpoints hoạt động và giao diện người dùng theo kịch bản trong `README.md`.
+- [x] Đẩy toàn bộ source code lên Git repository.
+- [ ] Chuẩn bị email nộp bài theo mẫu.
 
 ---
 
@@ -212,5 +210,6 @@ Thu thập hoặc chuẩn bị 4 ảnh mẫu vào thư mục tài nguyên test:
 - [x] **R4. AI-Powered Data Extraction**: Gemini Vision Service, Prompt JSON tiếng Việt, xử lý ảnh mờ/lỗi.
 - [x] **R5. Report Validation & Inventory Updates**: `IDbContextTransaction`, cập nhật `PassedStock`/`FailedStock`.
 - [x] **R2. React User Interface**: Setup Vite/React, Dashboard thống kê, Upload form, Preview & Review form.
-- [ ] **R6. Testing & Presentation**: 4 ảnh test scenario, tài liệu `README.md`, video demo, nộp bài.
+- [x] **R6. Testing & Documentation**: Tạo 4 ảnh kịch bản `TestImages/`, hoàn thiện `README.md`.
+- [ ] **Deliverables Final**: Quay video clip demo và gửi email nộp bài.
 
